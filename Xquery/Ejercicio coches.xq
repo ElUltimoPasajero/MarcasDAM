@@ -1,5 +1,5 @@
 
- (:for $fabricante in distinct-values(/coches/coche/fabricante)
+(: for $fabricante in distinct-values(/coches/coche/fabricante)
   let $ventas := sum(/coches/coche[fabricante = $fabricante]/ventas)
   where $ventas > 2
   order by $ventas descending
@@ -9,7 +9,7 @@
       for $coche in /coches/coche[fabricante = $fabricante]
       return <modelo>{data($coche/modelo)}</modelo>
     }
-    </fabricante>:)
+    </fabricante> :)
 
 
 (:==============================================================:)
@@ -40,7 +40,7 @@
     
     
     
-   (: let $total := (
+ (:  let $total := (
       
       for $datos in distinct-values(//coche/@decada)
       let $total :=sum(//coche[@decada=$datos]/ventas)
@@ -100,23 +100,25 @@ return <cochePerfecto>
 
 <tipo>{data($miCoche/@tipo)}</tipo>
 
-<cilindrada>{data($miCoche/cilindrada)}</cilindrada>
+<cilindrada>{data($miCoche/cilindrada)}</cilindrada> 
 
-</cochePerfecto> :) (:Me muestra un coche que sea seat, deportivo , con dos puertas, que alcance mas de 150 y con cilindrada 1.6:)
+</cochePerfecto> :)  (:Me muestra un coche que sea seat, deportivo , con dos puertas, que alcance mas de 150 y con cilindrada 1.6:)
 
 (:==============================================================:)
 
+for $coche in //coches/coche
+where $coche/velocidad_maxima > 150
+  and $coche/@decada = "1990"
+  and $coche/plazas > 1
+  and string-length($coche/@tipo) >= 9
+return
 
-(:for $coches in //coches/coche where $coches/velocidad_maxima > 150
-
-and $coches[@tipo = "Deportivo"] and $coches/plazas > 1 and string-length($coches/@tipo)>=9
-
-return <deportivos>
-<modelo>{data($coches/modelo)}</modelo>
-
-<decada-fabricacion> {data($coches/@decada)}</decada-fabricacion>
-
-</deportivos> :) (: Me devuelve los soches cuya velovidad maxima sea mayor que 150 cuyo tipo sea deportivo y que en el tipo deportivo el string sea igual o mayor que 9:)
+ <coche>   
+ <modelo año-fabricacion="{data($coche/@decada)}">{data($coche/modelo)}</modelo>
+   
+ </coche> 
+  
+  (: Me devuelve los soches cuya velovidad maxima sea mayor que 150 cuya decada sea 1990 y que en el tipo ,que tenga mas de 1 plaza, el string sea igual o mayor que 9:)
 
 (:==============================================================:)
 
@@ -141,7 +143,7 @@ return $cantidad :) (: Me devuelve la suma de todos los coches que corren mas de
 
   
 
-(: for $coches in distinct-values (//coches/coche/@tipo)
+(:for $coches in distinct-values (//coches/coche/@tipo)
 
 let $masVendido := (//coches/coche[@tipo=$coches])[ventas= max(//coches/coche[@tipo=$coches]/ventas)]
 
@@ -244,13 +246,21 @@ let $suma := sum($deportivos/ventas)
 return $suma  :)
 
 
-for $fabricante in distinct-values (//coches/coche/fabricante)
+(:for $fabricante in distinct-values (//coches/coche/fabricante)
 
 let $ventas := sum(//coches/coche[fabricante=$fabricante]/ventas)
 
 order by $ventas descending
 
-return <fabricante nombre="{$fabricante}">Ventas={data($ventas)}</fabricante>
+return <fabricante nombre="{$fabricante}">Ventas={data($ventas)}</fabricante> :)
+
+
+(: let $coche := //coches/coche[ventas = max(//coches/coche/ventas)]
+
+return $coche  :)
+
+(:Devuelve el coche mas vendido:)
+
 
 
 
